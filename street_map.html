@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <head>
+        <link rel="stylesheet" href="map.css">
+        <script src="app.js" charset="utf-8"></script>
+        <script src="kon.js" defer="defer"></script>
+        <script src="js/lib/ko.js"></script>
+
+    </head>
+    <div class="container">
+        <div class="options-box">
+            <h1>Udacity Object street map</h1>
+            <div class="list">
+                <h1>分类</h1>
+                <div>
+                    <input type="text" data-bind="value:places_name,click:Click_input">
+                    <button id="submit-btn" data-bind="click: Chick_places">筛选</button>
+                </div>
+                <ul data-bind="foreach:places">
+                    <li data-bind="text:name,visible:view "></li>
+            </div>
+        </div>
+        <div id="map"></div>
+    </div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrFKeX72rR82mbme3lH27PQhQ4xC_IaDQ&v=3&callback=initMap">
+    </script>
+
+</body>
+
+</html>
