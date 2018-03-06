@@ -133,7 +133,7 @@ function renderMarker() { //渲染地图函数
 
         let position = locations[i].location;
         let title = locations[i].title;
-        let marker = new google.maps.Marker({
+        var marker = new google.maps.Marker({
             map: map,
             position: position,
             title: title,
@@ -144,19 +144,21 @@ function renderMarker() { //渲染地图函数
         bounds.extend(marker.position);
 
         marker.addListener('click', function() {
+          var self=this;
             $.ajax({
                     url: `http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=${position.lat},${position.lng}&output=json&pois=1&ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl`,
                     dataType: "jsonp"
                 })
                 .done(function(data) {
                     add(data);
+                    populateInfoWindow(self, largeinfowindow);
 
                 })
                 .fail(function(error) {
                     requestError();
                 });
 
-            populateInfoWindow(this, largeinfowindow);
+
 
             // const img = `http://api.map.baidu.com/panorama/v2?ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&location=${position.lng},${position.lat}`;
             // htmlContent = `<img src="${img}" alt="map">`;
@@ -200,7 +202,7 @@ function add(data) {
 
     if(data) {
 
-        htmlContent = `'<div>'+ ${data.result.formatted_address}+'</div>'`
+        htmlContent = `'<div>'${data.result.formatted_address}'</div>'`
     } else {
         htmlContent = '<div>具体地址</div>';
     }
