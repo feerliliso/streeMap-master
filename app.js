@@ -1,7 +1,7 @@
 var map; //创建一个变量
 var marker; //创建一个变量存储marker
 var markers = []; //创建一个数组用来存放marker
-var htmlContent = '';
+var htmlContent='';
 var locations = [{ //默认地点数组
 
         kind: '博物馆',
@@ -134,26 +134,40 @@ function renderMarker() { //渲染地图函数
         var title = locations[i].title;
 
         var marker = new google.maps.Marker({
-
             map: map,
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
             id: i
         });
+
         markers.push(marker);
         bounds.extend(marker.position);
+        console.log('first: '+position.lat,position.lng);
         marker.addListener('click', function() {
-            populateInfoWindow(this, largeinfowindow);
-console.log(position);
-            fetch( `http://api.map.baidu.com/panorama/v2?ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&width=512&height=256&location=116.313393,40.04778&fov=180`)
-            .then(response=>response.json())
-            .then(add)
-            .catch(err=>requestError());
+          console.log('second: '+position.lat,position.lng);
+          $.ajax({
+            url: `http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=${position.lat},${position.lng}&output=json&pois=1&ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl`,
+            dataType: "jsonp"
+        })
+        .done(function (data) {
+          add(data);
+
+        })
+        .fail(function(error) {
+            console.log(error);
         });
+            populateInfoWindow(this, largeinfowindow);
 
+          // const img = `http://api.map.baidu.com/panorama/v2?ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&location=${position.lng},${position.lat}`;
+          // htmlContent = `<img src="${img}" alt="map">`;
 
-        }
+            /*fetch(`http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=${position.lat,position.lng}&output=json&pois=1&ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&callback=showLocation`)
+            .then(response => response.json())//异步部分，把取回的值转化成JSON.
+            .then(add)
+            .catch(err=>requestError());//错误处理*/
+        });
+}
      map.fitBounds(bounds);
     }
 
@@ -161,11 +175,12 @@ console.log(position);
 
 
 function populateInfoWindow(marker, infowindow) { //信息窗口函数
+
     if(infowindow.marker != marker) {
         infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title + htmlContent+'</div>');
+        infowindow.setContent('<div>' + marker.title +'</div>'+'<div>' +htmlContent+'</div>');
         infowindow.open(map, marker);
-        console.log(marker.title);
+      ;
         marker.setAnimation(google.maps.Animation.BOUNCE);
         infowindow.addListener('closeclick', function() {
             infowindow.setMarker = null;
@@ -180,25 +195,19 @@ function hideListings() { //隐藏marker函数
     }
 }
 
-function showListings() { //显示marker函数
-    var bounds = new google.maps.LatLngBounds();
-    for(var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
-        bounds.extend(markers[i].position);
-    }
-    map.fitBounds(bounds);
-}
+
 
 function add(data) {
 
-  if( data.response){
-    htmlContent = '<div>data.response</div>';
+  if(data){
+    console.log(data);
+    htmlContent = `'<div>'+ ${data.result.formatted_address}+'</div>'`
 }else{
 htmlContent = '<div>没有发现全景图片</div>';
     }
   }
 
-function requestError() {
+function requestError() {//异步失败
 htmlContent = '<div>异步调试失败</div>';
 
 }
