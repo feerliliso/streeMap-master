@@ -1,7 +1,7 @@
 var map; //创建一个变量
 var marker; //创建一个变量存储marker
 var markers = []; //创建一个数组用来存放marker
-var htmlContent='';
+var htmlContent = '';
 var locations = [{ //默认地点数组
 
         kind: '博物馆',
@@ -130,46 +130,46 @@ function renderMarker() { //渲染地图函数
     var largeinfowindow = new google.maps.InfoWindow(); //设置信息窗口
     var bounds = new google.maps.LatLngBounds();
     for(var i = 0; i < locations.length; i++) {
-        var position = locations[i].location;
-        var title = locations[i].title;
 
-        var marker = new google.maps.Marker({
+        let position = locations[i].location;
+        let title = locations[i].title;
+        let marker = new google.maps.Marker({
             map: map,
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
             id: i
         });
-
         markers.push(marker);
         bounds.extend(marker.position);
-        console.log('first: '+position.lat,position.lng);
-        marker.addListener('click', function() {
-          console.log('second: '+position.lat,position.lng);
-          $.ajax({
-            url: `http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=${position.lat},${position.lng}&output=json&pois=1&ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl`,
-            dataType: "jsonp"
-        })
-        .done(function (data) {
-          add(data);
 
-        })
-        .fail(function(error) {
-            console.log(error);
-        });
+        marker.addListener('click', function() {
+            $.ajax({
+                    url: `http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=${position.lat},${position.lng}&output=json&pois=1&ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl`,
+                    dataType: "jsonp"
+                })
+                .done(function(data) {
+                    add(data);
+
+                })
+                .fail(function(error) {
+                    requestError();
+                });
+
             populateInfoWindow(this, largeinfowindow);
 
-          // const img = `http://api.map.baidu.com/panorama/v2?ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&location=${position.lng},${position.lat}`;
-          // htmlContent = `<img src="${img}" alt="map">`;
+            // const img = `http://api.map.baidu.com/panorama/v2?ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&location=${position.lng},${position.lat}`;
+            // htmlContent = `<img src="${img}" alt="map">`;
 
             /*fetch(`http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=${position.lat,position.lng}&output=json&pois=1&ak=beFuxVorB63lhdLrdU5QzbgjNaKieLVl&callback=showLocation`)
             .then(response => response.json())//异步部分，把取回的值转化成JSON.
             .then(add)
             .catch(err=>requestError());//错误处理*/
         });
-}
-     map.fitBounds(bounds);
     }
+
+    map.fitBounds(bounds);
+}
 
 
 
@@ -178,9 +178,8 @@ function populateInfoWindow(marker, infowindow) { //信息窗口函数
 
     if(infowindow.marker != marker) {
         infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title +'</div>'+'<div>' +htmlContent+'</div>');
-        infowindow.open(map, marker);
-      ;
+        infowindow.setContent('<div>' + marker.title + '</div>' + '<div>' + htmlContent + '</div>');
+        infowindow.open(map, marker);;
         marker.setAnimation(google.maps.Animation.BOUNCE);
         infowindow.addListener('closeclick', function() {
             infowindow.setMarker = null;
@@ -199,15 +198,15 @@ function hideListings() { //隐藏marker函数
 
 function add(data) {
 
-  if(data){
-    console.log(data);
-    htmlContent = `'<div>'+ ${data.result.formatted_address}+'</div>'`
-}else{
-htmlContent = '<div>没有发现全景图片</div>';
-    }
-  }
+    if(data) {
 
-function requestError() {//异步失败
-htmlContent = '<div>异步调试失败</div>';
+        htmlContent = `'<div>'+ ${data.result.formatted_address}+'</div>'`
+    } else {
+        htmlContent = '<div>具体地址</div>';
+    }
+}
+
+function requestError() { //异步失败
+    htmlContent = '<div>异步调试失败</div>';
 
 }
