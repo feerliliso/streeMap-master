@@ -5,6 +5,7 @@
 
     <head>
         <link rel="stylesheet" href="map.css">
+        <script src="js/lib/MapData.js"></script>
         <script src="app.js" charset="utf-8"></script>
         <script src="kon.js" defer="defer"></script>
         <script src="js/lib/ko.js"></script>
@@ -22,11 +23,12 @@
                 </div>
                 <ul data-bind="foreach:places">
                     <li data-bind="text:name,visible:view "></li>
+                </ul>
             </div>
 
         <div id="map"></div>
     </div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrFKeX72rR82mbme3lH27PQhQ4xC_IaDQ&v=3&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrFKeX72rR82mbme3lH27PQhQ4xC_IaDQ&v=3&callback=initMap" onerror="Error()">
     </script>
 
 </body>

@@ -22,7 +22,9 @@ var ViewModle = function() {
           }
 
     }
-
+    self.listClick = function(place) {
+          google.maps.event.trigger(place.marker, "click"); // 触发google地图标记的click事件
+       }
     self.Chick_places = function() { //点击所引起的一系列动作
 
         if(self.places_name() ==="") { //如果是空值显示如下信息
